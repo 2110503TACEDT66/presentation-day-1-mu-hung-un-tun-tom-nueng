@@ -2,16 +2,18 @@ const mongoose = require('mongoose');
 
 const SessionSchema = new mongoose.Schema({
   user_id: {
-    type: String,
-    required: [true, `Please add your user id`],
+    type: mongoose.Schema.ObjectId,
+    ref: 'user',
+    required: true,
   },
   company_id: {
-    type: String,
-    required: [true, `Please add company id`],
+    type: mongoose.Schema.ObjectId,
+    ref: 'company',
+    required: true,
   },
   date: {
     type: Date,
-    required: [true, `Please add session's date`],
+    required: true,
   },
 });
 
