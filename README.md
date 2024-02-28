@@ -10,8 +10,17 @@
 
 To install the project, follow these steps:
 
-1. Navigate to the project directory: `cd Job_Fair_Backend`
-2. Install the dependencies: `npm install`
+1. Navigate to the project directory:
+
+```bash
+cd Job_Fair_Backend
+```
+
+2. Install the dependencies:
+
+```bash
+npm install
+```
 
 ## Usage
 
