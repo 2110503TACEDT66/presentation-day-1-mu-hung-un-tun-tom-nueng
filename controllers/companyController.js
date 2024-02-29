@@ -1,11 +1,11 @@
 const Company = require('../models/Company');
 
-exports.getCompanies = async (req, res) => {
+exports.getAllCompany = async (req, res) => {
   try {
-    const companies = await Company.find();
+    const allCompany = await Company.find();
     res
       .status(200)
-      .json({ success: true, count: companies.length, data: companies });
+      .json({ success: true, count: allCompany.length, data: allCompany });
   } catch (err) {
     res.status(400).json({ success: false });
   }

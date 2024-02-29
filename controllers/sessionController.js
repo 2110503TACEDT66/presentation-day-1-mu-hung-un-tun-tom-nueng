@@ -1,194 +1,188 @@
 const session = require('../models/Session');
-const Hospital = require('../models/Hospital');
+const company = require('../models/Company');
 
-// @desc        Get all appointments
-// @route       GET /api/v1/appointments
+// @desc        Get all sessions
+// @route       GET /api/v1/sessions
 // @access      Public
-exports.getAppointments = async (req, res, next) => {
+exports.getSessions = async (req, res, next) => {
   let query;
-  // General users can see only their appointments!
+  // General users can see only their Sessions!
   if (req.user.role !== 'admin') {
-    query = Appointment.find({ user: req.user.id }).populate({
-      path: 'hospital',
-      select: 'name province tel',
+    query = Session.find({ user: req.user.id }).populate({
+      path: 'company',
+      select: 'name website tel',
     });
   }
   // If you are an admin, you can see all!
   else {
-    if (req.params.hospitalId) {
-      console.log(req.params.hospitalId);
-      query = Appointment.find({ hospital: req.params.hospitalId }).populate({
-        path: 'hospital',
-        select: 'name province tel',
+    if (req.params.companyId) {
+      console.log(req.params.companyId);
+      query = Session.find({ company: req.params.companyId }).populate({
+        path: 'company',
+        select: 'name website tel',
       });
     } else {
-      query = Appointment.find().populate({
-        path: 'hospital',
-        select: 'name province tel',
+      query = Session.find().populate({
+        path: 'company',
+        select: 'name website tel',
       });
     }
   }
   try {
-    const appointments = await query;
+    const sessions = await query;
 
     res.status(200).json({
       success: true,
-      count: appointments.length,
-      data: appointments,
+      count: sessions.length,
+      data: sessions,
     });
   } catch (error) {
     console.log(error.stack);
     return res.status(500).json({
       success: false,
-      message: 'Cannot find Appointment',
+      message: 'Cannot find session',
     });
   }
 };
 
-// @desc        Get single appointment
-// @route       GET /api/v1/appointments/:id
+// @desc        Get single session
+// @route       GET /api/v1/sessions/:id
 // @access      Public
-exports.getAppointment = async (req, res, next) => {
+exports.getSession = async (req, res, next) => {
   try {
-    const appointment = await Appointment.findById(req.params.id).populate({
-      path: 'hospital',
-      select: 'name description tel',
+    const session = await Session.findById(req.params.id).populate({
+      path: 'company',
+      select: 'name website tel',
     });
 
-    if (!appointment) {
+    if (!session) {
       return res.status(404).json({
         success: false,
-        message: `No appointment with the id of ${req.params.id}`,
+        message: `No session with the id of ${req.params.id}`,
       });
     }
 
     res.status(200).json({
       success: true,
-      data: appointment,
+      data: session,
     });
   } catch (error) {
     console.log(error.stack);
     return res.status(500).json({
       success: false,
-      message: 'Cannot find Appointment',
+      message: 'Cannot find session',
     });
   }
 };
 
-// @desc        Add appointment
-// @route       POST /api/v1/hospitals/:hospitalId/appointments/
+// @desc        Add session
+// @route       POST /api/v1/company/:companyId/sessions/
 // @access      Private
-exports.addAppointment = async (req, res, next) => {
+exports.addSession = async (req, res, next) => {
   try {
-    req.body.hospital = req.params.hospitalId;
+    req.body.company = req.params.companyId;
 
-    const hospital = await Hospital.findById(req.params.hospitalId);
+    const company = await Company.findById(req.params.companyId);
 
-    if (!hospital) {
+    if (!company) {
       return res.status(404).json({
         success: false,
-        message: `No hospital with the id of ${req.params.hospitalId}`,
+        message: `No company with the id of ${req.params.companyId}`,
       });
     }
 
     // Add user id to req.body
     req.body.user = req.user.id;
 
-    // Check for existed appointment
-    const existedAppointments = await Appointment.find({ user: req.user.id });
+    // Check for existed session
+    const existedSessions = await Session.find({ user: req.user.id });
 
-    // If the user is not an admin, they can only create 3 appointment.
-    if (existedAppointments.length >= 3 && req.user.role !== 'admin') {
+    // If the user is not an admin, they can only create 3 session.
+    if (existedSessions.length >= 3 && req.user.role !== 'admin') {
       return res.status(400).json({
         success: false,
-        message: `The user with ID ${req.user.id} has already made 3 appointments`,
+        message: `The user with ID ${req.user.id} has already made 3 sessions`,
       });
     }
 
-    const appointment = await Appointment.create(req.body);
+    const session = await Session.create(req.body);
 
     res.status(200).json({
       success: true,
-      data: appointment,
+      data: session,
     });
   } catch (error) {
     console.log(error.stack);
     return res.status(500).json({
       success: false,
-      message: 'Cannot create Appointment',
+      message: 'Cannot create session',
     });
   }
 };
 
-// @desc        Update appointment
-// @route       PUT /api/v1/appointments/:id
+// @desc        Update session
+// @route       PUT /api/v1/sessions/:id
 // @access      Private
-exports.updateAppointment = async (req, res, next) => {
+exports.updateSession = async (req, res, next) => {
   try {
-    let appointment = await Appointment.findById(req.params.id);
+    let session = await Session.findById(req.params.id);
 
-    if (!appointment) {
+    if (!session) {
       return res.status(404).json({
         success: false,
-        message: `No appointment with the id of ${req.params.id}`,
+        message: `No session with the id of ${req.params.id}`,
       });
     }
 
-    //Make sure user is the appointment owner
-    if (
-      appointment.user.toString() !== req.user.id &&
-      req.user.role !== 'admin'
-    ) {
+    //Make sure user is the session owner
+    if (session.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(401).json({
         success: false,
-        message: `User ${req.user.id} is not authorized to update this appointment`,
+        message: `User ${req.user.id} is not authorized to update this session`,
       });
     }
 
-    appointment = await Appointment.findByIdAndUpdate(req.params.id, req.body, {
+    session = await Session.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
 
     res.status(200).json({
       success: true,
-      data: appointment,
+      data: session,
     });
   } catch (error) {
     console.log(error.stack);
     return res.status(500).json({
       success: false,
-      message: 'Cannot update Appointment',
+      message: 'Cannot update session',
     });
   }
 };
 
-// @desc        Delete appointment
-// @route       DELETE /api/v1/appointments/:id
+// @desc        Delete session
+// @route       DELETE /api/v1/sessions/:id
 // @access      Private
-exports.deleteAppointment = async (req, res, next) => {
+exports.deleteSession = async (req, res, next) => {
   try {
-    const appointment = await Appointment.findById(req.params.id);
+    const session = await Session.findById(req.params.id);
 
-    if (!appointment) {
+    if (!session) {
       return res.status(404).json({
         success: false,
-        message: `No appointment with the id of ${req.params.id}`,
+        message: `No session with the id of ${req.params.id}`,
       });
     }
 
-    //Make sure user is the appointment owner
-    if (
-      appointment.user.toString() !== req.user.id &&
-      req.user.role !== 'admin'
-    ) {
+    //Make sure user is the session owner
+    if (session.user.toString() !== req.user.id && req.user.role !== 'admin') {
       return res.status(401).json({
         success: false,
-        message: `User ${req.user.id} is not authorized to delete this appointment`,
+        message: `User ${req.user.id} is not authorized to delete this session`,
       });
     }
 
-    await appointment.deleteOne();
+    await session.deleteOne();
 
     res.status(200).json({
       success: true,
@@ -198,7 +192,7 @@ exports.deleteAppointment = async (req, res, next) => {
     console.log(error.stack);
     return res.status(500).json({
       success: false,
-      message: 'Cannot delete Appointment',
+      message: 'Cannot delete session',
     });
   }
 };
