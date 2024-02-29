@@ -1,4 +1,4 @@
-const Company = require('../models/company');
+const Company = require('../models/Company');
 
 exports.getCompanies = async (req, res) => {
   try {
