@@ -1,6 +1,6 @@
 const express = require('express');
 const {
-  getCompanies,
+  getAllCompany,
   getCompany,
   createCompany,
   updateCompany,
@@ -13,7 +13,7 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 
 router
   .route('/')
-  .get(protect, getCompanies)
+  .get(protect, getAllCompany)
   .post(protect, authorize('admin'), createCompany);
 router
   .route('/:id')

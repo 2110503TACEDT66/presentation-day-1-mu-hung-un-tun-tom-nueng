@@ -59,22 +59,6 @@ exports.login = async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 };
 
-// @desc        Logout user
-// @route       PUT /api/v1/auth/logout
-// @access      Private
-exports.logout = async (req, res, next) => {
-  req.headers.authorization = {};
-  const token = req.headers.authorization;
-  try {
-    res.status(200).json({ success: true, token });
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      message: 'Cannot logout',
-    });
-  }
-};
-
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
