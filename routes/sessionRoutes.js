@@ -5,7 +5,7 @@ const {
   addSession,
   updateSession,
   deleteSession,
-} = require('../controllers/appointments');
+} = require('../controllers/sessionController');
 
 const router = express.Router({ mergeParams: true });
 
