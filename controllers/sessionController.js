@@ -2,7 +2,7 @@ const session = require('../models/Session');
 const company = require('../models/Company');
 
 // @desc        Get all sessions
-// @route       GET /api/v1/sessions
+// @route       GET /sessions
 // @access      Public
 exports.getSessions = async (req, res, next) => {
   let query;
@@ -46,7 +46,7 @@ exports.getSessions = async (req, res, next) => {
 };
 
 // @desc        Get single session
-// @route       GET /api/v1/sessions/:id
+// @route       GET /sessions/:id
 // @access      Public
 exports.getSession = async (req, res, next) => {
   try {
@@ -76,7 +76,7 @@ exports.getSession = async (req, res, next) => {
 };
 
 // @desc        Add session
-// @route       POST /api/v1/company/:companyId/sessions/
+// @route       POST /company/:companyId/sessions/
 // @access      Private
 exports.addSession = async (req, res, next) => {
   try {
@@ -121,7 +121,7 @@ exports.addSession = async (req, res, next) => {
 };
 
 // @desc        Update session
-// @route       PUT /api/v1/sessions/:id
+// @route       PUT /sessions/:id
 // @access      Private
 exports.updateSession = async (req, res, next) => {
   try {
@@ -161,7 +161,7 @@ exports.updateSession = async (req, res, next) => {
 };
 
 // @desc        Delete session
-// @route       DELETE /api/v1/sessions/:id
+// @route       DELETE /sessions/:id
 // @access      Private
 exports.deleteSession = async (req, res, next) => {
   try {
