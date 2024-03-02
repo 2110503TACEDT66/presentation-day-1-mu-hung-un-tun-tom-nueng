@@ -11,6 +11,7 @@ const company = require('./routes/companyRoutes');
 const session = require('./routes/sessionRoutes');
 const user = require('./routes/userRoutes');
 const hpp = require('hpp');
+const cors = require('cors');
 
 dotenv.config({ path: './config/config.env' });
 
@@ -23,6 +24,7 @@ app.use(mongoSanitize());
 app.use(helmet());
 app.use(xss());
 app.use(hpp());
+app.use(cors());
 
 const limiter = rateLimit({
   windowsMs: 10 * 60 * 1000, //10 mins
