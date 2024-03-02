@@ -9,7 +9,7 @@ exports.getSessions = async (req, res, next) => {
   // General users can see only their Sessions!
   if (req.user.role !== 'admin') {
     query = Session.find({ user: req.user.id }).populate({
-      path: 'company',
+      path: 'Company',
       select: 'name website tel',
     });
   }
@@ -18,12 +18,12 @@ exports.getSessions = async (req, res, next) => {
     if (req.params.companyId) {
       console.log(req.params.companyId);
       query = Session.find({ company: req.params.companyId }).populate({
-        path: 'company',
+        path: 'Company',
         select: 'name website tel',
       });
     } else {
       query = Session.find().populate({
-        path: 'company',
+        path: 'Company',
         select: 'name website tel',
       });
     }
@@ -51,7 +51,7 @@ exports.getSessions = async (req, res, next) => {
 exports.getSession = async (req, res, next) => {
   try {
     const session = await Session.findById(req.params.id).populate({
-      path: 'company',
+      path: 'Company',
       select: 'name website tel',
     });
 

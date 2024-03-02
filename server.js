@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/companies', company);
+app.use('/company', company);
 app.use('/auth', user);
 app.use('/sessions', session);
 
