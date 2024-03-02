@@ -6,25 +6,25 @@ const Company = require('../models/Company');
 // @access      Public
 exports.getSessions = async (req, res, next) => {
   let query;
+
   // General users can see only their Sessions!
   if (req.user.role !== 'admin') {
     query = Session.find({ user: req.user.id }).populate({
       path: 'company',
-      select: 'name website tel',
+      select: 'name address website desc tel',
     });
   }
   // If you are an admin, you can see all!
   else {
     if (req.params.companyId) {
-      console.log(req.params.companyId);
       query = Session.find({ company: req.params.companyId }).populate({
         path: 'company',
-        select: 'name website tel',
+        select: 'name address website desc tel',
       });
     } else {
       query = Session.find().populate({
         path: 'company',
-        select: 'name website tel',
+        select: 'name address website desc tel',
       });
     }
   }
@@ -49,12 +49,21 @@ exports.getSessions = async (req, res, next) => {
 // @route       GET /sessions/:id
 // @access      Public
 exports.getSession = async (req, res, next) => {
-  try {
-    const session = await Session.findById(req.params.id).populate({
+  let query;
+  if (req.user.role !== 'admin') {
+    query = Session.find({ _id: req.params.id, user: req.user.id }).populate({
       path: 'company',
-      select: 'name website tel',
+      select: 'name address website desc tel',
     });
+  } else {
+    query = Session.findById(req.params.id).populate({
+      path: 'company',
+      select: 'name address website desc tel',
+    });
+  }
 
+  try {
+    const session = await query;
     if (!session) {
       return res.status(404).json({
         success: false,
@@ -79,21 +88,22 @@ exports.getSession = async (req, res, next) => {
 // @route       POST /sessions
 // @access      Private
 exports.addSession = async (req, res, next) => {
-  try {
-    req.body.company = req.params.companyId;
-
-    const company = await Company.findById(req.params.companyId);
-
-    if (!company) {
-      return res.status(404).json({
-        success: false,
-        message: `No company with the id of ${req.params.companyId}`,
-      });
-    }
-
-    // Add user id to req.body
+  // Add user id to req.body
+  if (req.user.role !== 'admin') {
     req.body.user = req.user.id;
+  } else if (!req.body.user) {
+    req.body.user = req.user.id;
+  }
 
+  const date = new Date(req.body.date);
+  if (!checkDate(date)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Date must be between May 10th - 13th, 2022',
+    });
+  }
+
+  try {
     // Check for existed session
     const existedSessions = await Session.find({ user: req.user.id });
 
@@ -106,7 +116,6 @@ exports.addSession = async (req, res, next) => {
     }
 
     const session = await Session.create(req.body);
-
     res.status(200).json({
       success: true,
       data: session,
@@ -132,6 +141,16 @@ exports.updateSession = async (req, res, next) => {
         success: false,
         message: `No session with the id of ${req.params.id}`,
       });
+    }
+
+    if (req.body.date) {
+      const date = new Date(req.body.date);
+      if (!checkDate(date)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Date must be between May 10th - 13th, 2022',
+        });
+      }
     }
 
     //Make sure user is the session owner
@@ -196,3 +215,10 @@ exports.deleteSession = async (req, res, next) => {
     });
   }
 };
+
+function checkDate(date) {
+  return (
+    date >= new Date('2022-05-10T00:00:00Z') &&
+    date <= new Date('2022-05-13T23:59:59Z')
+  );
+}
