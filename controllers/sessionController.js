@@ -1,5 +1,5 @@
-const session = require('../models/Session');
-const company = require('../models/Company');
+const Session = require('../models/Session');
+const Company = require('../models/Company');
 
 // @desc        Get all sessions
 // @route       GET /sessions
@@ -76,7 +76,7 @@ exports.getSession = async (req, res, next) => {
 };
 
 // @desc        Add session
-// @route       POST /company/:companyId/sessions/
+// @route       POST /sessions
 // @access      Private
 exports.addSession = async (req, res, next) => {
   try {
