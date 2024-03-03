@@ -4,11 +4,59 @@ const Company = require('../models/Company');
 // @route       GET /companies
 // @access      Public
 exports.getAllCompany = async (req, res) => {
+  let query;
+
+  const reqQuery = { ...req.query };
+
+  const removeFields = ['select', 'sort', 'page', 'limit'];
+
+  removeFields.forEach((param) => delete reqQuery[param]);
+  console.log(reqQuery);
+
+  let querStr = JSON.stringify(reqQuery);
+  querStr = querStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`);
+
+  query = Company.find(JSON.parse(querStr)).populate('sessions');
+
+  if (req.query.select) {
+    const fields = req.query.select.split(',').join(' ');
+    query = query.select(fields);
+  }
+
+  //Sort
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('name');
+  }
+
+  //Pagination
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
-    const allCompany = await Company.find();
+    const total = await Company.countDocuments();
+    query = query.skip(startIndex).limit(limit);
+
+    const allCompany = await query;
+    const pagination = {};
+    if (endIndex < total) {
+      pagination.next = { page: page + 1, limit };
+    }
+    if (startIndex > 0) {
+      pagination.prev = { page: page - 1, limit };
+    }
     res
       .status(200)
-      .json({ success: true, count: allCompany.length, data: allCompany });
+      .json({
+        success: true,
+        count: allCompany.length,
+        pagination,
+        data: allCompany,
+      });
   } catch (err) {
     res.status(400).json({ success: false });
   }
@@ -63,12 +111,18 @@ exports.updateCompany = async (req, res) => {
 // @access      Private
 exports.deleteCompany = async (req, res) => {
   try {
-    const company = await Company.findByIdAndDelete(req.params.id);
+    const company = await Company.findById(req.params.id);
 
     if (!company) {
-      return res.status(400).json({ success: false });
+      return res
+        .status(404)
+        .json({
+          success: false,
+          msg: `Company not found with id of ${req.params.id}`,
+        });
     }
 
+    await company.deleteOne();
     res.status(200).json({ success: true, data: company });
   } catch (err) {
     res.status(400).json({ success: false });
