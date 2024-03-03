@@ -18,11 +18,9 @@ const CompanySchema = new mongoose.Schema(
     },
     desc: {
       type: String,
-      required: [true, `Please add company's description`],
     },
     tel: {
       type: String,
-      required: [true, `Please add company phone number`],
     },
   },
   {
