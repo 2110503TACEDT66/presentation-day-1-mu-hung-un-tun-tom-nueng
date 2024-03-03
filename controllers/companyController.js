@@ -1,7 +1,7 @@
 const Company = require('../models/Company');
 
-// @desc        Get all companies
-// @route       GET /companies
+// @desc        Get all company
+// @route       GET /company
 // @access      Public
 exports.getAllCompany = async (req, res) => {
   let query;
@@ -61,7 +61,7 @@ exports.getAllCompany = async (req, res) => {
 };
 
 // @desc        Get single company
-// @route       GET /companies/:id
+// @route       GET /company/:id
 // @access      Public
 exports.getCompany = async (req, res) => {
   try {
@@ -77,7 +77,7 @@ exports.getCompany = async (req, res) => {
 };
 
 // @desc        Create new company
-// @route       POST /companies
+// @route       POST /company
 // @access      Private
 exports.createCompany = async (req, res) => {
   const company = await Company.create(req.body);
@@ -105,7 +105,7 @@ exports.updateCompany = async (req, res) => {
 };
 
 // @desc        Delete company
-// @route       DELETE /companies/:id
+// @route       DELETE /company/:id
 // @access      Private
 exports.deleteCompany = async (req, res) => {
   try {

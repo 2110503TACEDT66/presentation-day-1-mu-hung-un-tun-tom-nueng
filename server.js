@@ -32,7 +32,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use('/companies', company);
+app.use('/company', company);
 app.use('/auth', user);
 app.use('/sessions', session);
 
