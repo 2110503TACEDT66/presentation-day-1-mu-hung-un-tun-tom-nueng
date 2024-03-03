@@ -1,8 +1,8 @@
-@startuml Manage Session (UPDATE)
+@startuml Manage Session (PUT)
 
 header Job Fair Sequence Diagram
 footer Page %page% of %lastpage%
-title "Manage Session (UPDATE)"
+title "Manage Session (PUT)"
 
 participant "Client" as client
 participant "<<javaScript>>\n:server" as server
