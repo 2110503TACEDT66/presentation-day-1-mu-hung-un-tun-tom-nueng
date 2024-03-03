@@ -1,0 +1,27 @@
+@startuml Job Fair System Use Case Diagram
+left to right direction
+actor "User" as user
+rectangle "Job Fair System" as JobFairSystem {    
+    usecase "Authofication" as register
+    usecase "Login" as login
+    usecase "Get Current User" as getMe
+    usecase "View\nCompany" as viewCompany
+    usecase "Manage\nSession" as manageSession
+    usecase "Manage\nCompany" as manageCompany
+}
+
+user -- register
+user -- login
+user -- getMe
+user -- viewCompany
+user -- manageSession
+
+actor "Admin" as admin
+register -- admin
+login -- admin
+getMe -- admin
+viewCompany -- admin
+manageCompany -- admin
+manageSession -- admin
+
+@enduml
