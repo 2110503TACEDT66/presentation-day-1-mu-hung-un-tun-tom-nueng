@@ -49,14 +49,12 @@ exports.getAllCompany = async (req, res) => {
     if (startIndex > 0) {
       pagination.prev = { page: page - 1, limit };
     }
-    res
-      .status(200)
-      .json({
-        success: true,
-        count: allCompany.length,
-        pagination,
-        data: allCompany,
-      });
+    res.status(200).json({
+      success: true,
+      count: allCompany.length,
+      pagination,
+      data: allCompany,
+    });
   } catch (err) {
     res.status(400).json({ success: false });
   }
@@ -114,12 +112,10 @@ exports.deleteCompany = async (req, res) => {
     const company = await Company.findById(req.params.id);
 
     if (!company) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          msg: `Company not found with id of ${req.params.id}`,
-        });
+      return res.status(404).json({
+        success: false,
+        msg: `Company not found with id of ${req.params.id}`,
+      });
     }
 
     await company.deleteOne();
