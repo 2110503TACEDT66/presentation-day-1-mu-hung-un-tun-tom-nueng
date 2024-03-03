@@ -1,0 +1,26 @@
+@startuml Manage Session (DELETE)
+
+header Job Fair Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Session (DELETE)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:sessions" as routerSession
+participant "<<middleware>>\n:auth" as authMiddleware
+participant "<<controllers>>\n:sessions" as controllersSession
+participant "<<model>>\n:Session" as modelSession
+database "<<MongoDB>>\n:sessions" as SessionDatabase
+
+client->server ++:req.delete('/sessions/:id')
+server->routerSession ++:app.use('/sessions',session)
+routerSession -> authMiddleware ++:protect()
+routerSession -> authMiddleware :authorize('admin', 'user')
+routerSession -> controllersSession ++:deleteSession()
+controllersSession->modelSession ++:findByIdAndDelete(req.params.id)
+modelSession ->SessionDatabase ++: SessionSchema
+SessionDatabase --> modelSession --: session
+controllersSession <-- modelSession --:session
+controllersSession->client --:response
+
+@enduml

@@ -1,0 +1,25 @@
+@startuml Login User (POST)
+
+header Job Fair Sequence Diagram
+footer Page %page% of %lastpage%
+title "Login User (POST)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:auth" as routerUser
+participant "<<controllers>>\n:auth" as controllersUser
+participant "<<model>>\n:User" as modelUser
+database "<<MongoDB>>\n:users" as UserDatabase
+
+client->server ++:req.post('/auth/login')
+server->routerUser ++:app.use('/auth',user)
+routerUser -> controllersUser ++:login()
+controllersUser->modelUser ++:findOne({email}).select('+password')
+controllersUser->modelUser :user.getSignedJwtToken()
+modelUser ->UserDatabase ++: UserSchema
+UserDatabase --> modelUser --:user.password
+controllersUser <-- modelUser :user.password
+controllersUser <-- modelUser --:token
+controllersUser->client --:response
+
+@enduml

@@ -1,0 +1,25 @@
+@startuml Manage Company (GET ONE)
+
+header Job Fair Sequence Diagram
+footer Page %page% of %lastpage%
+title "Manage Company (GET ONE)"
+
+participant "Client" as client
+participant "<<javaScript>>\n:server" as server
+participant "<<router>>\n:company" as routerCompany
+participant "<<middleware>>\n:auth" as authMiddleware
+participant "<<controllers>>\n:company" as controllersCompany
+participant "<<model>>\n:Company" as modelCompany
+database "<<MongoDB>>\n:company" as CompanyDatabase
+
+client->server ++:req.get('/company/:id')
+server->routerCompany ++:app.use('/company',company)
+routerCompany -> authMiddleware ++:protect()
+routerCompany -> controllersCompany ++:getCompany()
+controllersCompany->modelCompany ++:findById(req.params.id)
+modelCompany ->CompanyDatabase ++: CompanySchema
+CompanyDatabase --> modelCompany --: company
+controllersCompany <-- modelCompany --:company
+controllersCompany->client --:response
+
+@enduml
