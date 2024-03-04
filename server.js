@@ -35,6 +35,7 @@ app.use(limiter);
 app.use('/company', company);
 app.use('/auth', user);
 app.use('/sessions', session);
+app.use('/uploads', express.static('uploads'));
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(

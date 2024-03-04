@@ -38,6 +38,9 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  profile: {
+    type: String,
+  },
 });
 
 // Encrypt password using bcrypt
