@@ -1,0 +1,37 @@
+@startuml
+skinparam Linetype ortho
+
+entity "User" as user {
+  * user_id <<generated>>
+  --
+  * name: String
+  * tel: String
+  * email: String
+  * password: String
+  role: Enum[admin, user]
+  createdAt: Date
+}
+
+entity "Session" as session {
+  * session_id <<generated>>
+  --
+  * userId: String <<FK>>
+  * companyId; String <<FK>>
+  date: Date
+}
+
+entity "Company" as company {
+  * company_id <<generated>>
+  --
+  * name: String
+  * address: String
+  * website: String
+  desc: String
+  tel: String
+}
+
+user "1" -- "*" session
+company "1" -- "*" session
+
+@enduml
+
