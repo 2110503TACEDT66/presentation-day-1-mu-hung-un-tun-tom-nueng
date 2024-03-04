@@ -14,6 +14,7 @@ exports.register = async (req, res, next) => {
       email,
       password,
       role,
+      profile: req.file ? req.file.path : null,
     });
 
     sendTokenResponse(user, 200, res);
